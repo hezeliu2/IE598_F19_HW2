@@ -1,0 +1,53 @@
+import pandas as pd
+import numpy as np
+df=pd.read_csv("Treasury Squeeze test - DS1.csv")
+df.head
+
+df.describe()
+
+from sklearn.model_selection import train_test_split
+X=df.values[:,2:11]
+y=df['squeeze'].values
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state=42)
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn import preprocessing
+param_grid={'n_neighbors': np.arange(1,26)}
+knn = KNeighborsClassifier()
+knn_cv=GridSearchCV(knn,param_grid)
+knn_cv.fit(X_train, y_train)
+print('best k')
+print(format(knn_cv.best_params_))
+print('Optimal accuracy score ')
+print(format(knn_cv.best_score_))
+
+neighbors = np.arange(1, 26)
+train_accuracy = np.empty(len(neighbors))
+test_accuracy = np.empty(len(neighbors))
+for i,k in enumerate(neighbors):
+    knn=KNeighborsClassifier(n_neighbors=k)
+    knn.fit(X_train,y_train)
+    train_accuracy[i]=knn.score(X_train,y_train)
+    test_accuracy[i]=knn.score(X_test,y_test)
+plt.title('k-NN: Varying Number of Neighbors')
+plt.plot(neighbors, test_accuracy, label = 'Testing Accuracy')
+plt.plot(neighbors, train_accuracy, label = 'Training Accuracy')
+plt.legend()
+plt.xlabel('Number of Neighbors')
+plt.ylabel('Accuracy')
+plt.show()    
+
+from sklearn.tree import DecisionTreeClassifier
+param_grid={'max_depth': np.arange(1,11)}
+tree=DecisionTreeClassifier()
+tree_cv=GridSearchCV(tree,param_grid)
+tree_cv.fit(X_train, y_train)
+print('best depth')
+print(format(tree_cv.best_params_))
+print('Optimal accuracy score ')
+print(format(tree_cv.best_score_))
+
+print("My name is Heze Liu")
+print("My NetID is: hezeliu2")
+print("I hereby certify that I have read the University policy on Academic Integrity and that I am not in violation.")
